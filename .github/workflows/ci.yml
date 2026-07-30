@@ -25,3 +25,15 @@ jobs:
 
       - name: Test
         run: uv run pytest -q
+
+      - name: SQLMesh test
+        working-directory: sqlmesh
+        run: uv run --project .. sqlmesh test
+
+      - name: SQLMesh plan
+        working-directory: sqlmesh
+        run: uv run --project .. sqlmesh plan --auto-apply --no-prompts
+
+      - name: SQLMesh audit
+        working-directory: sqlmesh
+        run: uv run --project .. sqlmesh audit

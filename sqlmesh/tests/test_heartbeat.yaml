@@ -1,0 +1,7 @@
+test_heartbeat:
+  model: meta.heartbeat
+  outputs:
+    query:
+      partial: true
+      rows:
+        - id: 1
