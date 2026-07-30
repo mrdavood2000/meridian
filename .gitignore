@@ -6,3 +6,6 @@ __pycache__/
 .env
 lake/
 warehouse/*.duckdb*
+sqlmesh/logs/
+sqlmesh/.cache/
+logs/

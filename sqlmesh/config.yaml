@@ -1,0 +1,28 @@
+# SQLMesh project config.
+#
+# gotcha worth knowing on day one: `database:` below is resolved relative to
+# the *process's current working directory* when SQLMesh runs, not relative
+# to this file. Every command in this repo is run with `sqlmesh/` as cwd
+# (`cd sqlmesh && sqlmesh ...`) specifically so this path resolves correctly.
+gateways:
+  local:
+    connection:
+      type: duckdb
+      database: ../warehouse/meridian.duckdb
+
+default_gateway: local
+
+model_defaults:
+  dialect: duckdb
+  # one day before today, so the first daily cron interval has already
+  # elapsed and `sqlmesh plan --auto-apply` backfills immediately on a
+  # fresh clone instead of waiting for midnight UTC.
+  start: 2026-07-16
+  cron: '@daily'
+
+linter:
+  enabled: true
+  rules:
+    - ambiguousorinvalidcolumn
+    - invalidselectstarexpansion
+    - noambiguousprojections

@@ -3,7 +3,10 @@ name = "meridian"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "duckdb>=1.5.5",
+    "sqlmesh[web]>=0.236.1",
+]
 
 [build-system]
 requires = ["hatchling"]
