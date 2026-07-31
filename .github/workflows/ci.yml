@@ -37,3 +37,6 @@ jobs:
       - name: SQLMesh audit
         working-directory: sqlmesh
         run: uv run --project .. sqlmesh audit
+
+      - name: Dagster definitions validate
+        run: uv run dagster definitions validate -w workspace.yaml

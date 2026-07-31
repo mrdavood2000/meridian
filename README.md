@@ -14,9 +14,21 @@ Python 3.12 · `uv` · DuckDB · SQLMesh · Dagster · GitHub Actions CI
 
 ## Run it
 
+### Docker (recommended)
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Then open http://localhost:3000 for the Dagster UI.
+
+### Without Docker
+
 ```bash
 uv sync
-uv run pytest
+cd sqlmesh && uv run sqlmesh plan --auto-apply --no-prompts && cd ..
+uv run dagster dev -w workspace.yaml
 ```
 
 ## Design notes
