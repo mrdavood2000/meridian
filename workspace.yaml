@@ -1,0 +1,2 @@
+load_from:
+  - python_module: meridian.dagster_defs.definitions

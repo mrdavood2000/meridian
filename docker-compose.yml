@@ -1,0 +1,9 @@
+services:
+  meridian:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./lake:/app/lake
+      - ./warehouse:/app/warehouse
+    env_file: .env
