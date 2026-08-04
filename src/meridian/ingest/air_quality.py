@@ -18,7 +18,6 @@ field used for the actual filter.
 from __future__ import annotations
 
 import datetime as dt
-import typing as t
 import uuid
 from pathlib import Path
 
@@ -73,7 +72,7 @@ def fetch_station_detail(client: httpx.Client, station_number: str) -> dict:
     }
 
 
-def fetch_amsterdam_stations(client: t.Optional[httpx.Client] = None) -> pd.DataFrame:
+def fetch_amsterdam_stations(client: httpx.Client | None = None) -> pd.DataFrame:
     """The authoritative-municipality-filtered Amsterdam station set, live."""
     owns_client = client is None
     client = client or httpx.Client(timeout=30.0)
@@ -94,7 +93,7 @@ def fetch_measurements(
     station_numbers: list[str],
     start: dt.datetime,
     end: dt.datetime,
-    client: t.Optional[httpx.Client] = None,
+    client: httpx.Client | None = None,
 ) -> pd.DataFrame:
     """Every measurement for the given stations in [start, end), verbatim."""
     owns_client = client is None
@@ -128,10 +127,10 @@ def _write_partition(df: pd.DataFrame, event_date: dt.date, lake_root: Path, sou
     return file_path
 
 
-def land_stations(lake_root: Path, client: t.Optional[httpx.Client] = None) -> pd.DataFrame:
+def land_stations(lake_root: Path, client: httpx.Client | None = None) -> pd.DataFrame:
     """Poll station metadata and land it, verbatim plus ingest metadata."""
     stations = fetch_amsterdam_stations(client=client)
-    ingested_at = dt.datetime.now(dt.timezone.utc)
+    ingested_at = dt.datetime.now(dt.UTC)
     stations["ingested_at"] = ingested_at
     if not stations.empty:
         _write_partition(stations, ingested_at.date(), lake_root, "air_quality_stations")
@@ -143,14 +142,14 @@ def land_measurements(
     station_numbers: list[str],
     start: dt.datetime,
     end: dt.datetime,
-    client: t.Optional[httpx.Client] = None,
+    client: httpx.Client | None = None,
 ) -> pd.DataFrame:
     """Poll measurements and land them verbatim, partitioned by the day the
     measurement actually happened - not the day it was polled - so a
     single land call can straddle a UTC midnight boundary correctly.
     """
     measurements = fetch_measurements(station_numbers, start, end, client=client)
-    ingested_at = dt.datetime.now(dt.timezone.utc)
+    ingested_at = dt.datetime.now(dt.UTC)
     if measurements.empty:
         return measurements
 

@@ -15,7 +15,13 @@ import datetime as dt
 from pathlib import Path
 
 import duckdb
-from dagster import AssetExecutionContext, Definitions, ScheduleDefinition, asset, define_asset_job
+from dagster import (
+    AssetExecutionContext,
+    Definitions,
+    ScheduleDefinition,
+    asset,
+    define_asset_job,
+)
 from dagster_sqlmesh import SQLMeshContextConfig, SQLMeshResource, sqlmesh_assets
 
 from meridian.ingest.air_quality import land_measurements, land_stations
@@ -79,7 +85,7 @@ def land_air_quality_stations() -> int:
 )
 def land_air_quality_measurements() -> int:
     stations = land_stations(LAKE_ROOT)  # re-fetched live, not passed through Dagster IO
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     start = now - dt.timedelta(hours=25)
     measurements = land_measurements(LAKE_ROOT, stations["station_number"].tolist(), start, now)
     return len(measurements)
