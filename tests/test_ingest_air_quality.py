@@ -16,11 +16,12 @@ def test_excludes_amsterdamse_false_positive():
         ],
     }
     details = {
-        "NL_REAL": {"number": "NL_REAL", "location": "Amsterdam Vondelpark", "municipality": "Amsterdam"},
+        "NL_REAL": {"number": "NL_REAL", "location": "Amsterdam Vondelpark", "municipality": "Amsterdam", "geometry": {"coordinates": [4.8686, 52.3579]}},
         FALSE_POSITIVE_NUMBER: {
             "number": FALSE_POSITIVE_NUMBER,
             "location": FALSE_POSITIVE_LOCATION,
             "municipality": FALSE_POSITIVE_MUNICIPALITY,
+            "geometry": {"coordinates": [4.9, 52.1]},
         },
     }
 
@@ -32,4 +33,4 @@ def test_excludes_amsterdamse_false_positive():
 
     client = httpx.Client(transport=httpx.MockTransport(handler), base_url="https://api.luchtmeetnet.nl/open_api")
     confirmed = fetch_amsterdam_stations(client)
-    assert {s["number"] for s in confirmed} == {"NL_REAL"}
+    assert set(confirmed["station_number"]) == {"NL_REAL"}
