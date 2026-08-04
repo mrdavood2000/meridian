@@ -4,7 +4,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .env
-lake/
+lake/**/*.parquet
 warehouse/*.duckdb*
 sqlmesh/logs/
 sqlmesh/.cache/
