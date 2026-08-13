@@ -6,16 +6,16 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-
-      - name: Set up Python
-        run: uv python install 3.12
+        with:
+          version: "0.11.29"
+          enable-cache: true
 
       - name: Install dependencies
         run: uv sync --frozen
@@ -23,20 +23,20 @@ jobs:
       - name: Lint
         run: uv run ruff check .
 
-      - name: Test
+      - name: Python tests
         run: uv run pytest -q
 
-      - name: SQLMesh test
+      - name: SQLMesh unit tests (against a disposable DuckDB)
         working-directory: sqlmesh
         run: uv run --project .. sqlmesh test
 
-      - name: SQLMesh plan
+      - name: SQLMesh plan (builds the project and diffs against prod)
         working-directory: sqlmesh
         run: uv run --project .. sqlmesh plan --auto-apply --no-prompts
 
-      - name: SQLMesh audit
+      - name: SQLMesh audits
         working-directory: sqlmesh
         run: uv run --project .. sqlmesh audit
 
-      - name: Dagster definitions validate
+      - name: Dagster definitions load cleanly
         run: uv run dagster definitions validate -w workspace.yaml

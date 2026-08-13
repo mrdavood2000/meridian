@@ -6,4 +6,5 @@ services:
     volumes:
       - ./lake:/app/lake
       - ./warehouse:/app/warehouse
-    env_file: .env
+    env_file:
+      - .env
