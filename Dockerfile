@@ -4,16 +4,16 @@ RUN pip install --no-cache-dir uv
 
 WORKDIR /app
 
-# Dependency files first -- this layer only rebuilds when deps actually change
-COPY pyproject.toml uv.lock .python-version ./
+# Dependency layer cached separately from source so code edits don't force a re-resolve.
+COPY pyproject.toml uv.lock README.md ./
+COPY src ./src
 RUN uv sync --frozen --no-dev
 
-# Now the rest of the source
 COPY . .
-RUN chmod +x scripts/entrypoint.sh
+RUN mkdir -p /app/.dagster_home /app/lake /app/warehouse
 
-ENV DAGSTER_HOME=/app/dagster_home
-RUN mkdir -p $DAGSTER_HOME
+ENV DAGSTER_HOME=/app/.dagster_home
+ENV PYTHONUNBUFFERED=1
 
 EXPOSE 3000
 

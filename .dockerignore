@@ -1,12 +1,10 @@
 .venv/
 .git/
 __pycache__/
-*.pyc
 .pytest_cache/
 .ruff_cache/
-lake/
-warehouse/*.duckdb*
 sqlmesh/logs/
 sqlmesh/.cache/
-logs/
-.env
+lake/
+warehouse/*.duckdb*
+.dagster_home/

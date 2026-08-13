@@ -1,14 +1,37 @@
-# 0003 — Dagster for orchestration, `docker compose up` for one-command boot
+# 0003: Dagster for orchestration, `docker compose up` for one-command boot
 
-**Date:** day 3
+**Day:** 3
 
-**Decision:** SQLMesh runs are wrapped as Dagster assets (via `dagster-sqlmesh`), and the whole stack boots with one `docker compose up --build`.
+## Decision
+SQLMesh runs are wrapped as Dagster assets via `dagster-sqlmesh`, and the whole stack
+comes up with a single `docker compose up --build`.
 
-**Why Dagster.** The alternative was "just use SQLMesh's own built-in scheduler and skip an orchestrator entirely." Dagster earns its place once there's real lineage across multiple feeds to see and real ingestion jobs to schedule independently of the transform layer — neither exists yet at day 3, which is exactly why it's introduced now, deliberately early: if the integration was going to have sharp edges, better to find them in week one than in week three when a broken wiring would block everything built on top of it. It did have one: see the gotcha below.
+## Why Dagster
+I seriously considered skipping an orchestrator entirely and just leaning on SQLMesh's
+own built-in scheduler. Dagster only really earns its keep once there's real lineage
+across multiple feeds worth visualizing, and real ingestion jobs that need to run on
+their own schedule, independent of the transform layer. Neither of those exists yet —
+there's one feed and one schedule right now.
 
-**Why `docker compose up` as the only documented way to boot.** One command, one true way to run this — no "works if you remember to also do X first" tribal knowledge.
+I brought it in anyway, on purpose, this early. If the `dagster-sqlmesh` integration was
+going to have sharp edges, I'd rather hit them in week one, with nothing built on top of
+it yet, than in week three when a broken wiring blocks everything downstream. It did have
+an edge — see below.
 
-**A real gotcha, hit immediately:** the exact same relative-path issue from day 2
-(`config.yaml`'s `database:` path resolves against the process's *working directory*) resurfaces inside the Dagster asset, because Dagster runs `meridian_sqlmesh_assets` with the repo root as `cwd`, not `sqlmesh/`. Fixed by wrapping the SQLMesh call in `contextlib.chdir(SQLMESH_PROJECT_PATH)` — the same fix in spirit as "every SQLMesh CLI command runs from `sqlmesh/`," just applied at the one call site that isn't a CLI invocation.
+## Why `docker compose up`
+One command, one documented way to boot this thing. No tribal knowledge like "works, but
+only if you also start X first and remember to export Y."
 
-**Revisit if:** true sub-minute polling cadences are ever needed — Dagster's cron-based `ScheduleDefinition` has no sub-minute granularity; that would need a sensor/daemon loop instead.
+## Gotcha
+Same relative-path problem as day 2, just wearing a different hat. `config.yaml`'s
+`database:` path resolves against the process's working directory — and Dagster runs
+`meridian_sqlmesh_assets` with the repo root as `cwd`, not `sqlmesh/`. So the fix from
+0002 (always run from `sqlmesh/`) doesn't apply here, because this isn't a CLI
+invocation. Ended up wrapping the SQLMesh call in `contextlib.chdir(SQLMESH_PROJECT_PATH)`
+right at that one call site — same underlying fix, just applied where it's actually
+needed this time.
+
+## Revisit if
+True sub-minute polling is ever needed. Dagster's `ScheduleDefinition` is cron-based and
+has no sub-minute granularity, so that would mean reaching for a sensor/daemon loop
+instead — not a small change, but not urgent today either.

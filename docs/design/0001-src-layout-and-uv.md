@@ -1,11 +1,22 @@
 # 0001: src layout and uv
 
+**Day:** 1
+
 ## Decision
-packages code lives under `src/meridian`, not a flat top-level `meridian\`.
-Dependency and environment management is `uv`, not bare `pip / venv`
+Package code lives under `src/meridian/`, not a flat top-level `meridian/`. Dependency
+and environment management goes through `uv`, not bare `pip`/`venv`.
 
 ## Why
-A `src/` layout forces tests to import the *installed* package, not whatever happens to be
-in the current directory - it catches "works on my machine because I'm sitting in the right folder"
-packaging bugs early, for free. `uv` was chosen over `pip`/`poetry` for a fast, reproducible,
-single-lockfile workflow (`uv.lock`) with no separate virtualenv-activation ritual to forget.
+The `src/` layout is a small amount of upfront annoyance that pays for itself the first
+time a test accidentally imports the package sitting in the current directory instead of
+the one that's actually installed. That bug is sneaky precisely because it only shows up
+on someone else's machine, or in CI, never on yours — so I'd rather structure the repo so
+it's not possible in the first place than debug it later.
+
+`uv` won over `pip`/`poetry` for boring reasons: one lockfile (`uv.lock`), one tool for
+both dependency resolution and the venv itself, and no "did I remember to activate it"
+ritual every time I open a new shell. Nothing exotic here, just fewer moving parts.
+
+## Revisit if
+Never expect to, honestly — this is about as low-risk a foundational choice as they come.
+If anything, it'd be uv's ecosystem maturity that forces a rethink, not the layout.

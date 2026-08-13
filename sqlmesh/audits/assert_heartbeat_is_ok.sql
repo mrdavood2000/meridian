@@ -4,5 +4,4 @@ AUDIT (
 
 SELECT *
 FROM meta.heartbeat
-WHERE id IS NULL
-   OR checked_at IS NULL
+WHERE id IS NULL OR checked_at IS NULL

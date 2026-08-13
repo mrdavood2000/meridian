@@ -1,4 +1,4 @@
-test_heartbeat:
+test_heartbeat_returns_exactly_one_row:
   model: meta.heartbeat
   outputs:
     query:
