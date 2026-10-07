@@ -10,7 +10,16 @@ monitoring layer built to catch the failures pipelines actually die of: the sile
 
 ## Status
 
-Early scaffolding. Nothing real lands yet.
+Being built in the open, one day at a time — each day is one pull request, with a short design note in [`docs/design/`](docs/design/) for every decision that wasn't obvious.
+
+| Day | What landed |
+|---|---|
+| 1 | Project scaffolding: `uv`, `src/` layout, CI, lint, the secrets convention |
+| 2 | SQLMesh + DuckDB: first model, test and audit, wired into CI |
+| 3 | Dagster orchestration (`dagster-sqlmesh`) and one-command Docker boot |
+| 4 | First real feed: Amsterdam air quality (Luchtmeetnet) landed immutably in the lake |
+
+Next: conform the air-quality data onto the UTC clock and the H3 grid, then the bitemporal model, then the other three feeds and the monitoring layer.
 
 ## Stack
 
